@@ -1,8 +1,21 @@
-/* eslint-disable import/no-extraneous-dependencies */
+// @ts-ignore
+import { parseEnv } from './src/utils/env'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
+
+/**
+ * Check env variables at build time.
+ */
+function envCheckVitePlugin(mode: string) {
+  return {
+    buildStart() {
+      parseEnv(loadEnv(mode, process.cwd(), ''))
+    },
+    name: 'env-check-plugin',
+  }
+}
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-})
+export default defineConfig(({ mode }) => ({
+  plugins: [react(), envCheckVitePlugin(mode)],
+}))
