@@ -1,6 +1,6 @@
-// @ts-ignore
 import { parseEnv } from './src/utils/env'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 import { defineConfig, loadEnv } from 'vite'
 
 /**
@@ -18,4 +18,9 @@ function envCheckVitePlugin(mode: string) {
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [react(), envCheckVitePlugin(mode)],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
 }))
