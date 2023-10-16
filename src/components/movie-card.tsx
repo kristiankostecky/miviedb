@@ -1,17 +1,26 @@
+import { MovieBySearch } from '@/api/omdb'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Heading } from '@/components/ui/heading'
-import { InfoCircledIcon, StarIcon } from '@radix-ui/react-icons'
+import { PATHS } from '@/utils/constants'
+import { HandleFavoriteChange } from '@/utils/hooks/favorites'
+import {
+  InfoCircledIcon,
+  StarFilledIcon,
+  StarIcon,
+} from '@radix-ui/react-icons'
+import { Link, generatePath } from 'react-router-dom'
+
+interface Movie extends MovieBySearch {
+  isFavorite: boolean
+}
 
 export function MovieCard({
   movie,
+  onFavoriteChange,
 }: {
-  movie: {
-    Poster: string
-    Title: string
-    Type: string
-    Year: string
-  }
+  movie: Movie
+  onFavoriteChange: HandleFavoriteChange
 }) {
   return (
     <div className="relative flex flex-col items-center overflow-hidden rounded-md bg-gray-100">
@@ -22,15 +31,20 @@ export function MovieCard({
       />
       <div className="absolute flex h-full w-full flex-col justify-between bg-gradient-to-t from-black via-black via-10% p-4">
         <Button
-          aria-label="Add to favorites"
+          aria-label={
+            movie.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+          }
           className="self-end rounded-full"
           size="icon"
           variant="outline"
           onClick={() => {
-            // TODO: toggle favorite
+            onFavoriteChange({
+              action: movie.isFavorite ? 'remove' : 'add',
+              movie: { ...movie, isFavorite: !movie.isFavorite },
+            })
           }}
         >
-          <StarIcon />
+          {movie.isFavorite ? <StarFilledIcon /> : <StarIcon />}
         </Button>
         <div className="flex items-end justify-between gap-4 text-white">
           <div>
@@ -43,9 +57,15 @@ export function MovieCard({
               {movie.Title}
             </Heading>
           </div>
-          {/* TODO: Add link logic */}
-          <Button aria-label="View movie info" className="shrink-0" size="icon">
-            <InfoCircledIcon />
+          <Button
+            aria-label="View movie info"
+            asChild
+            className="shrink-0"
+            size="icon"
+          >
+            <Link to={generatePath(PATHS.MOVIE, { id: movie.imdbID })}>
+              <InfoCircledIcon />
+            </Link>
           </Button>
         </div>
       </div>

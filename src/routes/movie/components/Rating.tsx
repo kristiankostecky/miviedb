@@ -49,6 +49,10 @@ export function Rating({ source, value }: { source: string; value: string }) {
     case 'Rotten Tomatoes':
       return <RatingRottenTomatoes ratingValue={value} />
     default:
-      return <Badge variant="outline">{value}</Badge>
+      return (
+        <Badge variant="outline">
+          {source}: {value}
+        </Badge>
+      )
   }
 }

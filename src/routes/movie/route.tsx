@@ -1,125 +1,111 @@
 import { ExtraInfo } from './components/ExtraInfo'
 import { Rating } from './components/Rating'
+import { omdb } from '@/api/omdb'
+import { FavoriteButton } from '@/components/favorite-button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Heading } from '@/components/ui/heading'
+import { useQueryWithLoader } from '@/lib/hooks/useQueryWithLoader'
+import { useFavorites } from '@/utils/hooks/favorites'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
+import { QueryClient } from '@tanstack/react-query'
+import { LoaderFunctionArgs, useNavigate, useParams } from 'react-router-dom'
+import { object, parse, string } from 'valibot'
 
-const MOVIE = {
-  Actors: 'Lionel Atwill, Fay Wray, Melvyn Douglas',
-  Awards: 'N/A',
-  BoxOffice: 'N/A',
-  Country: 'United States',
-  DVD: '01 Jul 2016',
-  Director: 'Frank R. Strayer',
-  Genre: 'Drama, Horror, Mystery',
-  Language: 'English',
-  Metascore: 'N/A',
-  Plot: 'When corpses drained of blood begin to show up in a European village, vampirism is suspected to be responsible.',
-  Poster:
-    'https://m.media-amazon.com/images/M/MV5BY2Q1NWZlOWQtOGQwMS00YjUyLTlkZDctNTQ5ZjRlNGE1ZDI1XkEyXkFqcGdeQXVyNjc0MzMzNjA@._V1_SX300.jpg',
-  Production: 'N/A',
-  Rated: 'Passed',
-  Ratings: [
-    {
-      Source: 'Internet Movie Database',
-      Value: '5.7/10',
-    },
-    {
-      Source: 'Rotten Tomatoes',
-      Value: '67%',
-    },
-  ],
-  Released: '10 Jan 1933',
-  Response: 'True',
-  Runtime: '65 min',
-  Title: 'The Vampire Bat',
-  Type: 'movie',
-  Website: 'N/A',
-  Writer: 'Edward T. Lowe Jr.',
-  Year: '1933',
-  imdbID: 'tt0024727',
-  imdbRating: '5.7',
-  imdbVotes: '2,874',
+const queryParamParser = (params: LoaderFunctionArgs['params']) => {
+  return parse(
+    object({
+      id: string(),
+    }),
+    params
+  )
 }
 
-type Rating = {
-  Source: string
-  Value: string
-}
+const movieQuery = (...args: Parameters<typeof omdb.movieById>) => ({
+  queryFn: () => {
+    return omdb.movieById(...args)
+  },
+  queryKey: ['movie', ...args] as const,
+})
 
-type Movie = {
-  Actors: string
-  Awards: string
-  BoxOffice: string
-  Country: string
-  DVD: string
-  Director: string
-  Genre: string
-  Language: string
-  Metascore: string
-  Plot: string
-  Poster: string
-  Production: string
-  Rated: string
-  Ratings: Array<Rating>
-  Released: string
-  Response: string
-  Runtime: string
-  Title: string
-  Type: string
-  Website: string
-  Writer: string
-  Year: string
-  imdbID: string
-  imdbRating: string
-  imdbVotes: string
-}
+export const movieLoader =
+  (queryClient: QueryClient) =>
+  ({ params }: LoaderFunctionArgs) => {
+    const { id } = parse(
+      object({
+        id: string(),
+      }),
+      params
+    )
+    const query = movieQuery(id)
+    return queryClient.ensureQueryData(query)
+  }
 
 export function Movie() {
+  const navigate = useNavigate()
+  const params = useParams()
+  const { id } = queryParamParser(params)
+  const { data: movie } = useQueryWithLoader<typeof movieLoader>(movieQuery(id))
+  const { addFavorite, isFavorite, removeFavorite } = useFavorites()
+
+  const isFavoriteMovie = isFavorite(movie.imdbID)
   return (
     <div className="relative grid grid-cols-1 gap-6 md:grid-cols-2">
       <Button
         aria-label="Navigate back"
-        className="absolute left-0 top-0 sm:left-4 sm:top-4"
+        className="absolute left-0 top-0 z-10 sm:left-4 sm:top-4"
         size="icon"
         variant="secondary"
+        onClick={() => {
+          navigate(-1)
+        }}
       >
         <ArrowLeftIcon />
       </Button>
-      <div className="-mx-8 -mt-10 sm:m-0">
+      <div className="relative -mx-8 -mt-10 sm:m-0">
         <img
-          alt={MOVIE.Title}
+          alt={movie.Title}
           className="h-full min-h-full w-full object-contain sm:max-h-[80vh]"
-          src={MOVIE.Poster}
+          src={movie.Poster}
+        />
+        <FavoriteButton
+          className="absolute right-4 top-4 z-10"
+          isFavorite={isFavoriteMovie}
+          onClick={() => {
+            if (isFavoriteMovie) {
+              removeFavorite(movie.imdbID)
+            } else {
+              addFavorite({ ...movie, isFavorite: true })
+            }
+          }}
         />
       </div>
       <div className="flex flex-col p-4">
         <ul className="flex gap-2">
-          {MOVIE.Genre.split(', ').map((genre) => (
+          {movie.Genre.split(', ').map((genre) => (
             <li key={genre}>
               <Badge variant="outline">{genre}</Badge>
             </li>
           ))}
         </ul>
-        <Heading className="mt-2">{MOVIE.Title}</Heading>
+        <Heading className="mt-2">{movie.Title}</Heading>
         <ExtraInfo
           info={[
-            { label: 'Released at', value: MOVIE.Released },
-            { label: 'Country', value: MOVIE.Country },
-            { label: 'Director', value: MOVIE.Director },
-            { label: 'Writer', value: MOVIE.Writer },
-            { label: 'Runtime', value: MOVIE.Runtime },
+            { label: 'Released at', value: movie.Released },
+            { label: 'Country', value: movie.Country },
+            { label: 'Director', value: movie.Director },
+            { label: 'Writer', value: movie.Writer },
+            { label: 'Runtime', value: movie.Runtime },
           ]}
         />
-        <p className="mt-8 text-justify">{MOVIE.Plot}</p>
+        <p className="mt-8 text-justify">{movie.Plot}</p>
         <div>
           <Heading as="h2" className="mt-8" size="h4">
             Ratings
           </Heading>
           <ul className="mt-2 flex gap-2">
-            {MOVIE.Ratings.map((rating) => {
+            {movie.Ratings.map((rating) => {
               return (
                 <li key={rating.Source}>
                   <Rating source={rating.Source} value={rating.Value} />
@@ -132,7 +118,7 @@ export function Movie() {
           Actors
         </Heading>
         <ul className="mt-2 flex max-w-full gap-6 overflow-auto">
-          {MOVIE.Actors.split(', ').map((actor) => {
+          {movie.Actors.split(', ').map((actor) => {
             const actorInitials = actor.split(' ').map((name) => name[0])
             return (
               <li key={actor} className="flex flex-col items-center ">

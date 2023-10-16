@@ -1,48 +1,86 @@
-import { MoviesGrid } from '@/components/MoviesGrid'
+import { omdb } from '@/api/omdb'
+import { MovieCard } from '@/components/movie-card'
+import { ResponsiveGrid } from '@/components/responsive-grid'
+import { useQueryWithLoader } from '@/lib/hooks/useQueryWithLoader'
+import { cn } from '@/lib/utils'
+import { useFavorites } from '@/utils/hooks/favorites'
+import { getSearchParams } from '@/utils/url'
+import { QueryClient } from '@tanstack/react-query'
+import {
+  LoaderFunctionArgs,
+  redirect,
+  useNavigation,
+  useSearchParams,
+} from 'react-router-dom'
+import { ValiError, nullable, object, parse, string } from 'valibot'
 
-const movies = [
-  {
-    Poster:
-      'https://m.media-amazon.com/images/M/MV5BZWQ3ZDQ3MTYtZWUyOS00YmFhLTllOWItNzNmNjE0ZDI5YWE5XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg',
-    Title: 'You Are So Not Invited to My Bat Mitzvah',
-    Type: 'movie',
-    Year: '2023',
-    imdbID: 'tt21276878',
+const searchParamsParser = (searchParams: URLSearchParams) => {
+  return parse(
+    object({
+      page: nullable(string()),
+      search: string(),
+    }),
+    getSearchParams(searchParams, ['page', 'search'])
+  )
+}
+
+const moviesQuery = (...args: Parameters<typeof omdb.search>) => ({
+  queryFn: () => {
+    return omdb.search(...args)
   },
-  {
-    Poster:
-      'https://m.media-amazon.com/images/M/MV5BMmRhY2Y4NmItNzkxNi00MjEwLWJiODctYWViMjY5OTQ0YTJlXkEyXkFqcGdeQXVyMjUzOTY1NTc@._V1_SX300.jpg',
-    Title: 'Bat*21',
-    Type: 'movie',
-    Year: '1988',
-    imdbID: 'tt0094712',
-  },
-  {
-    Poster:
-      'https://m.media-amazon.com/images/M/MV5BZWZmM2Y3OWMtNDllMC00YjY5LWFkZWItNDU4NzNlMmU4NTgwXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg',
-    Title: 'The Bat',
-    Type: 'movie',
-    Year: '1959',
-    imdbID: 'tt0052602',
-  },
-  {
-    Poster:
-      'https://m.media-amazon.com/images/M/MV5BZWE4MjhjMDItZmQ5Yy00OTQxLWE0M2EtZTJiMTFhMzc1NjJjXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg',
-    Title: 'The Devil Bat',
-    Type: 'movie',
-    Year: '1940',
-    imdbID: 'tt0032390',
-  },
-  {
-    Poster:
-      'https://m.media-amazon.com/images/M/MV5BY2Q1NWZlOWQtOGQwMS00YjUyLTlkZDctNTQ5ZjRlNGE1ZDI1XkEyXkFqcGdeQXVyNjc0MzMzNjA@._V1_SX300.jpg',
-    Title: 'The Vampire Bat',
-    Type: 'movie',
-    Year: '1933',
-    imdbID: 'tt0024727',
-  },
-]
+  queryKey: ['movies', ...args] as const,
+})
+
+export const moviesLoader =
+  (queryClient: QueryClient) =>
+  ({ request }: LoaderFunctionArgs) => {
+    try {
+      const { page, search } = searchParamsParser(
+        new URL(request.url).searchParams
+      )
+
+      const query = moviesQuery(search, page || undefined)
+      return queryClient.ensureQueryData(query)
+    } catch (error) {
+      if (error instanceof ValiError) {
+        throw redirect('/')
+      }
+      throw error
+    }
+  }
 
 export function Movies() {
-  return <MoviesGrid movies={movies} />
+  const [searchParams] = useSearchParams()
+  const { search } = searchParamsParser(searchParams)
+  const { data: movies } = useQueryWithLoader<typeof moviesLoader>(
+    moviesQuery(search)
+  )
+  const navigation = useNavigation()
+
+  const { handleFavoriteChange, isFavorite } = useFavorites()
+
+  if (!search) {
+    return <div>Search for movies</div>
+  }
+
+  if ('Error' in movies) {
+    return <div>{movies.Error}</div>
+  }
+
+  return (
+    <ResponsiveGrid
+      className={cn(navigation.state === 'loading' && 'opacity-40')}
+    >
+      {movies.Search.map((movie) => {
+        const isMovieFavorite = isFavorite(movie.imdbID)
+        return (
+          <MovieCard
+            key={movie.imdbID}
+            movie={{ isFavorite: isMovieFavorite, ...movie }}
+            onFavoriteChange={handleFavoriteChange}
+          />
+        )
+      })}
+    </ResponsiveGrid>
+  )
 }
