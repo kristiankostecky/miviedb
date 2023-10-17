@@ -1,6 +1,6 @@
 import { ValibotSchema, valibotFetch } from '@/lib/valibot-fetch'
 import { ENV } from '@/utils/constants'
-import { omitBy } from '@/utils/object'
+import { pickBy } from '@/utils/object'
 import {
   Output,
   array,
@@ -36,7 +36,7 @@ const omdbFetch = <TData>({
 }) => {
   return valibotFetch(
     schema,
-    `${API_URL}&${new URLSearchParams(omitBy(params)).toString()}`
+    `${API_URL}&${new URLSearchParams(pickBy(params)).toString()}`
   )
 }
 
