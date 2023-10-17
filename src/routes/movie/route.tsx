@@ -1,6 +1,7 @@
 import { ExtraInfo } from './components/ExtraInfo'
 import { Rating } from './components/Rating'
 import { omdb } from '@/api/omdb'
+import MoviePlaceholder from '@/assets/movie-placeholder.jpg'
 import { FavoriteButton } from '@/components/favorite-button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Heading } from '@/components/ui/heading'
 import { useQueryWithLoader } from '@/lib/hooks/useQueryWithLoader'
 import { useFavorites } from '@/utils/hooks/favorites'
+import { parseUrl } from '@/utils/url'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import { QueryClient } from '@tanstack/react-query'
 import { LoaderFunctionArgs, useNavigate, useParams } from 'react-router-dom'
@@ -32,24 +34,20 @@ const movieQuery = (...args: Parameters<typeof omdb.movieById>) => ({
 export const movieLoader =
   (queryClient: QueryClient) =>
   ({ params }: LoaderFunctionArgs) => {
-    const { id } = parse(
-      object({
-        id: string(),
-      }),
-      params
-    )
+    const { id } = queryParamParser(params)
     const query = movieQuery(id)
     return queryClient.ensureQueryData(query)
   }
 
 export function Movie() {
-  const navigate = useNavigate()
   const params = useParams()
+  const navigate = useNavigate()
   const { id } = queryParamParser(params)
-  const { data: movie } = useQueryWithLoader<typeof movieLoader>(movieQuery(id))
   const { addFavorite, isFavorite, removeFavorite } = useFavorites()
+  const { data: movie } = useQueryWithLoader<typeof movieLoader>(movieQuery(id))
 
   const isFavoriteMovie = isFavorite(movie.imdbID)
+
   return (
     <div className="relative grid grid-cols-1 gap-6 md:grid-cols-2">
       <Button
@@ -67,10 +65,10 @@ export function Movie() {
         <img
           alt={movie.Title}
           className="h-full min-h-full w-full object-contain sm:max-h-[80vh]"
-          src={movie.Poster}
+          src={parseUrl(movie.Poster, MoviePlaceholder)}
         />
         <FavoriteButton
-          className="absolute right-4 top-4 z-10"
+          className="absolute right-8 top-10 z-10"
           isFavorite={isFavoriteMovie}
           onClick={() => {
             if (isFavoriteMovie) {

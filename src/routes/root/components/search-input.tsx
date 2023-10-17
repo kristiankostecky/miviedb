@@ -1,40 +1,38 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { PATHS } from '@/utils/constants'
-import { getSearchParams } from '@/utils/url'
-import { useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { useDebounce } from 'react-use'
+import { useGetSearchParams } from '@/lib/hooks/useGetSearchParams'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { useDebounce, useFirstMountState } from 'react-use'
 
 export function SearchInput() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const { search } = getSearchParams(searchParams, ['search'])
+  const [_, setSearchParams] = useSearchParams()
+  const { q: search } = useGetSearchParams(['q'])
   const [inputValue, setInputValue] = useState(search || '')
-  const navigate = useNavigate()
-  const location = useLocation()
+  const isFirstMount = useFirstMountState()
 
   useDebounce(
     () => {
-      if (inputValue === '' && search === null) {
+      if (isFirstMount) {
         return
       }
-
-      if (location.pathname === PATHS.SEARCH) {
+      if (inputValue) {
         setSearchParams({
-          search: inputValue,
-        })
-      } else {
-        navigate({
-          pathname: PATHS.SEARCH,
-          search: new URLSearchParams({
-            search: inputValue,
-          }).toString(),
+          q: inputValue,
         })
       }
     },
     500,
     [inputValue]
   )
+
+  useEffect(() => {
+    // when input is filled and user navigates to `/search` input value is cleared
+    if (!search) {
+      setInputValue('')
+    }
+  }, [search])
+
   return (
     <>
       <Label className="sr-only" htmlFor="search">

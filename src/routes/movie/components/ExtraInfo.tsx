@@ -15,7 +15,7 @@ export function ExtraInfo({
     <p className="text-muted-foreground">
       {info.map(({ label, value }, index, array) => {
         return (
-          <Fragment key={value}>
+          <Fragment key={value + label}>
             <TooltipProvider>
               <Tooltip delayDuration={200}>
                 <TooltipTrigger asChild>

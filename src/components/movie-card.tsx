@@ -1,9 +1,11 @@
 import { MovieBySearch } from '@/api/omdb'
+import MoviePlaceholder from '@/assets/movie-placeholder.jpg'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Heading } from '@/components/ui/heading'
 import { PATHS } from '@/utils/constants'
 import { HandleFavoriteChange } from '@/utils/hooks/favorites'
+import { parseUrl } from '@/utils/url'
 import {
   InfoCircledIcon,
   StarFilledIcon,
@@ -27,7 +29,7 @@ export function MovieCard({
       <img
         alt={movie.Title}
         className="h-full w-full rounded-md object-cover"
-        src={movie.Poster}
+        src={parseUrl(movie.Poster, MoviePlaceholder)}
       />
       <div className="absolute flex h-full w-full flex-col justify-between bg-gradient-to-t from-black via-black via-10% p-4">
         <Button

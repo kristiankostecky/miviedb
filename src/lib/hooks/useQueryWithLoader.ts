@@ -25,6 +25,7 @@ export const useQueryWithLoader = <
     TQueryKey
   >
 ) => {
+  // https://tkdodo.eu/blog/react-query-meets-react-router#a-typescript-tip
   const initialData = useLoaderData() as LoaderReturnType<TQueryFnData>
   return useQuery({ ...options, initialData })
 }

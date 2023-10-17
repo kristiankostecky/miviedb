@@ -1,6 +1,16 @@
 import { ValibotSchema, valibotFetch } from '@/lib/valibot-fetch'
 import { ENV } from '@/utils/constants'
-import { Output, array, object, optional, string, union } from 'valibot'
+import { omitBy } from '@/utils/object'
+import {
+  Output,
+  array,
+  coerce,
+  number,
+  object,
+  optional,
+  string,
+  union,
+} from 'valibot'
 
 const API_URL = `https://www.omdbapi.com/?apikey=${ENV.VITE_OMDB_API_KEY}`
 
@@ -26,7 +36,7 @@ const omdbFetch = <TData>({
 }) => {
   return valibotFetch(
     schema,
-    `${API_URL}&${new URLSearchParams(params).toString()}`
+    `${API_URL}&${new URLSearchParams(omitBy(params)).toString()}`
   )
 }
 
@@ -41,28 +51,32 @@ const movieBySearchSchema = object({
 export type MovieBySearch = Output<typeof movieBySearchSchema>
 
 const search = (title: string, page?: string) => {
+  const params = {
+    page,
+    s: title,
+  }
+  const schema = union([
+    object({
+      Error: string(),
+      Response: string(),
+    }),
+    object({
+      Search: array(
+        object({
+          Poster: string(),
+          Title: string(),
+          Type: string(),
+          Year: string(),
+          imdbID: string(),
+        })
+      ),
+      totalResults: coerce(number(), (value) => Number(value)),
+    }),
+  ])
+
   return omdbFetch({
-    params: {
-      page,
-      s: title,
-    },
-    schema: union([
-      object({
-        Error: string(),
-        Response: string(),
-      }),
-      object({
-        Search: array(
-          object({
-            Poster: string(),
-            Title: string(),
-            Type: string(),
-            Year: string(),
-            imdbID: string(),
-          })
-        ),
-      }),
-    ]),
+    params,
+    schema,
   })
 }
 

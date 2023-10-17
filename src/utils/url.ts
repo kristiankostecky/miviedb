@@ -1,4 +1,11 @@
-export const getSearchParams = <TKeys extends ReadonlyArray<string>>(
+import { safeParse, string, url } from 'valibot'
+
+type QuerySearchParam = 'q'
+type PageSearchParam = 'page'
+
+export type SearchParam = PageSearchParam | QuerySearchParam
+
+export const getSearchParams = <TKeys extends ReadonlyArray<SearchParam>>(
   searchParams: URLSearchParams,
   keys: TKeys
 ) => {
@@ -11,4 +18,12 @@ export const getSearchParams = <TKeys extends ReadonlyArray<string>>(
     },
     {} as { [K in TKeys[number]]: ReturnType<URLSearchParams['get']> }
   )
+}
+
+export const parseUrl = (urlToParse: string, fallbackUrl: string) => {
+  const movieUrl = safeParse(string([url()]), urlToParse)
+  if (movieUrl.success) {
+    return movieUrl.output
+  }
+  return fallbackUrl
 }
