@@ -1,7 +1,7 @@
 import { MovieBySearch } from '@/api/omdb'
 import { useLocalStorage } from 'react-use'
 
-interface Movie extends MovieBySearch {
+export interface Movie extends MovieBySearch {
   isFavorite: boolean
 }
 

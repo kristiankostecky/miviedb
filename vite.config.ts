@@ -18,6 +18,11 @@ function envCheckVitePlugin(mode: string) {
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [react(), envCheckVitePlugin(mode)],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/__test__/tests-setup.ts',
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

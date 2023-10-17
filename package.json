@@ -31,6 +31,8 @@
     "valibot": "^0.19.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.0.0",
     "@types/node": "^20.8.4",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
@@ -44,6 +46,7 @@
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-perfectionist": "^2.1.0",
     "eslint-plugin-react": "^7.33.2",
+    "jsdom": "^22.1.0",
     "postcss": "^8.4.31",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.5",
