@@ -30,6 +30,7 @@
     "src/**/*.tsx",
     "tailwind.config.ts",
     ".eslintrc.cjs",
-    "src/utils/env.ts"
+    "src/utils/env.ts",
+    "lint-staged.config.cjs"
   ]
 }
