@@ -68,7 +68,7 @@ export function Movie() {
           src={parseUrl(movie.Poster, MoviePlaceholder)}
         />
         <FavoriteButton
-          className="absolute right-8 top-10 z-10"
+          className="absolute right-8 top-10 z-10 sm:top-4"
           isFavorite={isFavoriteMovie}
           onClick={() => {
             if (isFavoriteMovie) {

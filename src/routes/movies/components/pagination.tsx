@@ -16,7 +16,10 @@ export function Pagination({
   const hasNextPage = currentPage < totalPages
 
   return (
-    <nav className="mt-4 flex flex-col items-center justify-center py-4 sm:flex-row">
+    <nav
+      aria-label="pagination"
+      className="mt-4 flex flex-col items-center justify-center py-4 sm:flex-row"
+    >
       {hasPreviousPage ? (
         <Button asChild>
           <Link to={previousPagePath}>Previous page</Link>
