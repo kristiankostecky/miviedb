@@ -1,3 +1,4 @@
+import { ModeToggle } from '@/components/mode-toggle'
 import { Heading } from '@/components/ui/heading'
 import { PATHS } from '@/utils/constants'
 import { Link, Outlet, useMatch } from 'react-router-dom'
@@ -7,7 +8,7 @@ export function Root() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="sticky top-0 z-50 mx-0 flex h-20 flex-shrink-0 items-center justify-between gap-4 bg-white px-20 shadow-sm">
+      <header className="sticky top-0 z-50 mx-0 flex h-20 flex-shrink-0 items-center justify-between gap-4 border-b border-secondary bg-white px-20 shadow-sm dark:bg-black">
         <nav>
           <div className="flex gap-4">
             <Link to={PATHS.ROOT}>Home</Link>
@@ -15,7 +16,7 @@ export function Root() {
             <Link to={PATHS.FAVORITES}>Favorites</Link>
           </div>
         </nav>
-        <div className="flex gap-4">TODO: Night mode here</div>
+        <ModeToggle></ModeToggle>
       </header>
       <main className="container mt-8 flex-1">
         {isMatch && (

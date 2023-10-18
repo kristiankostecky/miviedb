@@ -8,6 +8,7 @@ import './index.css'
 import { Root } from './routes/root/route'
 import { Search } from './routes/search'
 import { PATHS } from './utils/constants'
+import { ThemeProvider } from './components/theme-provider'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -71,7 +72,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
       <ReactQueryDevtools position="bottom-right" />
     </QueryClientProvider>
   </React.StrictMode>
