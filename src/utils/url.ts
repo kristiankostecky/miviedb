@@ -16,7 +16,7 @@ export const getSearchParams = <TKeys extends ReadonlyArray<SearchParam>>(
         [key]: searchParams.get(key),
       }
     },
-    {} as { [K in TKeys[number]]: ReturnType<URLSearchParams['get']> }
+    {} as { [K in TKeys[number] as K]: ReturnType<URLSearchParams['get']> }
   )
 }
 

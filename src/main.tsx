@@ -1,14 +1,14 @@
+import { ErrorBoundary } from './components/error-boundry'
+import { ThemeProvider } from './components/theme-provider'
+import './index.css'
+import { Root } from './routes/root/route'
+import { Search } from './routes/search'
+import { PATHS } from './utils/constants'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { ErrorBoundary } from './components/error-boundry'
-import './index.css'
-import { Root } from './routes/root/route'
-import { Search } from './routes/search'
-import { PATHS } from './utils/constants'
-import { ThemeProvider } from './components/theme-provider'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +25,6 @@ const router = createBrowserRouter([
         children: [
           {
             errorElement: <ErrorBoundary />,
-            path: '',
             lazy: async () => {
               const { Movies, moviesLoader } = await import(
                 './routes/movies/route'
@@ -35,6 +34,7 @@ const router = createBrowserRouter([
                 loader: moviesLoader(queryClient),
               }
             },
+            path: '',
           },
         ],
         element: <Search />,
@@ -43,7 +43,6 @@ const router = createBrowserRouter([
       },
       {
         errorElement: <ErrorBoundary />,
-        path: PATHS.MOVIE,
         lazy: async () => {
           const { Movie, movieLoader } = await import('./routes/movie/route')
           return {
@@ -51,9 +50,9 @@ const router = createBrowserRouter([
             loader: movieLoader(queryClient),
           }
         },
+        path: PATHS.MOVIE,
       },
       {
-        path: PATHS.FAVORITES,
         errorElement: <ErrorBoundary />,
         lazy: async () => {
           const { Favorites } = await import('./routes/favorites')
@@ -61,6 +60,7 @@ const router = createBrowserRouter([
             Component: Favorites,
           }
         },
+        path: PATHS.FAVORITES,
       },
     ],
     element: <Root />,

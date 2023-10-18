@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import { getSearchParams, parseUrl } from './url'
+import { describe, expect, it } from 'vitest'
 
 describe('getSearchParams', () => {
   it('returns the search params', () => {
@@ -8,12 +8,12 @@ describe('getSearchParams', () => {
         'q',
         'page',
       ] as const)
-    ).toStrictEqual({ q: 'hello', page: '2' })
+    ).toStrictEqual({ page: '2', q: 'hello' })
   })
   it('returns null for missing search params', () => {
     expect(
       getSearchParams(new URLSearchParams('?q=hello'), ['q', 'page'] as const)
-    ).toStrictEqual({ q: 'hello', page: null })
+    ).toStrictEqual({ page: null, q: 'hello' })
   })
 })
 

@@ -6,7 +6,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useDebounce, useFirstMountState } from 'react-use'
 
 export function SearchInput() {
-  const [_, setSearchParams] = useSearchParams()
+  const setSearchParams = useSearchParams()[1]
   const { q: search } = useGetSearchParams(['q'])
   const [inputValue, setInputValue] = useState(search || '')
   const isFirstMount = useFirstMountState()

@@ -16,7 +16,7 @@ export function Root() {
             <Link to={PATHS.FAVORITES}>Favorites</Link>
           </div>
         </nav>
-        <ModeToggle></ModeToggle>
+        <ModeToggle />
       </header>
       <main className="container mt-8 flex-1">
         {isMatch && (

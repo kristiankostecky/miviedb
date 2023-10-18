@@ -1,15 +1,16 @@
 export class LocalStorageMock {
-  store: { [k: string]: string }
+  key = (idx: number): string => {
+    const values = Object.values(this.store)
+    return values[idx]
+  }
+
   length: number
+
+  store: { [k: string]: string }
 
   constructor() {
     this.store = {}
     this.length = 0
-  }
-
-  key = (idx: number): string => {
-    const values = Object.values(this.store)
-    return values[idx]
   }
 
   clear() {
@@ -20,11 +21,11 @@ export class LocalStorageMock {
     return this.store[key] || null
   }
 
-  setItem(key: string, value: string) {
-    this.store[key] = String(value)
-  }
-
   removeItem(key: string) {
     delete this.store[key]
+  }
+
+  setItem(key: string, value: string) {
+    this.store[key] = String(value)
   }
 }

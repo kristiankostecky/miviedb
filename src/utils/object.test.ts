@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import { pickBy } from './object'
+import { describe, expect, it } from 'vitest'
 
 describe('pickBy', () => {
   it('filters out falsy values', () => {

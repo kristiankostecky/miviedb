@@ -18,7 +18,6 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'perfectionist'],
   rules: {
-    'no-unused-vars': ["error", { "argsIgnorePattern": "^_" }]
     '@typescript-eslint/array-type': ['error', { default: 'generic' }],
     '@typescript-eslint/no-misused-promises': [
       2,

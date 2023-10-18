@@ -1,7 +1,7 @@
 import { useRouteError } from 'react-router-dom'
 import { ValiError } from 'valibot'
 
-export const ErrorBoundary = ({ message }: { message?: string }) => {
+export function ErrorBoundary({ message }: { message?: string }) {
   const error = useRouteError()
 
   console.error(error)

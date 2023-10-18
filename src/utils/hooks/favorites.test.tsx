@@ -1,22 +1,22 @@
+import { Movie, useFavorites } from './favorites'
 import { act, renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { Movie, useFavorites } from './favorites'
 
 const movieA: Movie = {
-  imdbID: '1',
-  Title: 'Movie A',
-  Year: '2021',
-  Type: 'movie',
   Poster: 'https://via.placeholder.com/300x450',
+  Title: 'Movie A',
+  Type: 'movie',
+  Year: '2021',
+  imdbID: '1',
   isFavorite: true,
 }
 
 const movieB: Movie = {
-  imdbID: '2',
-  Title: 'Movie B',
-  Year: '2021',
-  Type: 'movie',
   Poster: 'https://via.placeholder.com/300x450',
+  Title: 'Movie B',
+  Type: 'movie',
+  Year: '2021',
+  imdbID: '2',
   isFavorite: true,
 }
 
@@ -52,7 +52,6 @@ describe('useFavorites', () => {
   it('can check if a movie is a favorite', () => {
     const { result } = renderHook(() => useFavorites())
 
-    console.log(result.current.favorites)
     act(() => {
       result.current.addFavorite(movieA)
     })
