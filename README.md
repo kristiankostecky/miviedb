@@ -27,3 +27,4 @@ Simple movie database SPA to search for movies and view details about them. User
 - [ ] Migrate to [Remix.run](https://remix.run/) and use SSR for better SEO and performance. There are also other benefits like dealing with data fetching and caching, race conditions, shipping less JS to the client, running on the edge etc.
 - [ ] Replace [valibot](https://valibot.dev/) with [zod](https://zod.dev/), valibot is okay but the documentation is still not complete and it's not as popular as zod. (I wanted to try it, that's why I used it).
 - [ ] Use [axios](https://axios-http.com/) for data fetching instead of fetch API when more features would be needed.
+- [ ] Do not include API key in the client bundle, instead use a proxy server to fetch data from the API.
