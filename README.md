@@ -4,12 +4,13 @@ Simple movie database SPA to search for movies and view details about them. User
 
 [Live demo](https://miviedb.vercel.app)
 
-## Setup
+## Dev Setup
 
 1. Clone the repo
 2. Run `npm install`
-3. Setup your environment variables in `.env` file based on `.env.example`
-4. Run `npm run dev` to start the development server or `npm run build` to build the app for production and then `npm run preview` to start the production server.
+3. Run `npm run prepare` to install husky hooks
+4. Setup your environment variables in `.env` file based on `.env.example`
+5. Run `npm run dev` to start the development server or `npm run build` to build the app for production and then `npm run preview` to start the production server. Happy developing!
 
 ## Tech Stack
 

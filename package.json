@@ -4,16 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint --cache --ignore-path .gitignore",
-    "preview": "vite preview",
-    "tsc": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "prepare": "husky install",
+    "dev": "vite",
     "lint-staged": "lint-staged",
-    "pre-commit": "run-p test lint-staged"
+    "lint": "eslint --cache --ignore-path .gitignore",
+    "pre-commit": "run-p test lint-staged",
+    "prepare": "husky install",
+    "preview": "vite preview",
+    "test:watch": "vitest",
+    "test": "vitest run",
+    "tsc": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.0.4",
