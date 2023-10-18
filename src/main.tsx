@@ -1,10 +1,3 @@
-import './index.css'
-import { Favorites } from './routes/favorites'
-import { Movie, movieLoader } from './routes/movie/route'
-import { Movies, moviesLoader } from './routes/movies/route'
-import { Root } from './routes/root/route'
-import { Search } from './routes/search'
-import { PATHS } from './utils/constants'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import React from 'react'
@@ -15,32 +8,16 @@ import {
   useRouteError,
 } from 'react-router-dom'
 import { ValiError } from 'valibot'
-
-function ErrorBoundary({ message }: { message?: string }) {
-  const error = useRouteError()
-
-  console.error(error)
-  const errorMessage =
-    error instanceof ValiError ? (
-      error.message
-    ) : (
-      <>
-        Oops. Something went wrong 📡. <br /> Try to reload the page.
-      </>
-    )
-
-  return (
-    <div className="flex h-full items-center justify-center">
-      <p className="text-center">{message || errorMessage}</p>
-    </div>
-  )
-}
+import './index.css'
+import { Root } from './routes/root/route'
+import { Search } from './routes/search'
+import { PATHS } from './utils/constants'
+import { ErrorBoundary } from './components/error-boundry'
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // staleTime: 1000 * 60 * 5, // 5 minutes
-      staleTime: 1000 * 10, // 10 seconds
+      staleTime: 1000 * 60 * 5, // 5 minutes
     },
   },
 })
@@ -51,10 +28,17 @@ const router = createBrowserRouter([
       {
         children: [
           {
-            element: <Movies />,
             errorElement: <ErrorBoundary />,
-            loader: moviesLoader(queryClient),
             path: '',
+            lazy: async () => {
+              const { Movies, moviesLoader } = await import(
+                './routes/movies/route'
+              )
+              return {
+                Component: Movies,
+                loader: moviesLoader(queryClient),
+              }
+            },
           },
         ],
         element: <Search />,
@@ -62,15 +46,25 @@ const router = createBrowserRouter([
         path: PATHS.SEARCH,
       },
       {
-        element: <Movie />,
         errorElement: <ErrorBoundary />,
-        loader: movieLoader(queryClient),
         path: PATHS.MOVIE,
+        lazy: async () => {
+          const { Movie, movieLoader } = await import('./routes/movie/route')
+          return {
+            Component: Movie,
+            loader: movieLoader(queryClient),
+          }
+        },
       },
       {
-        children: [{ element: <Movies />, path: '' }],
-        element: <Favorites />,
         path: PATHS.FAVORITES,
+        errorElement: <ErrorBoundary />,
+        lazy: async () => {
+          const { Favorites } = await import('./routes/favorites')
+          return {
+            Component: Favorites,
+          }
+        },
       },
     ],
     element: <Root />,
