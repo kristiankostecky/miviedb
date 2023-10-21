@@ -100,14 +100,14 @@ export function Movies() {
             pathname: PATHS.SEARCH,
             search: new URLSearchParams({
               page: (page + 1).toString(),
-              search: searchParam ?? '',
+              q: searchParam ?? '',
             }).toString(),
           }}
           previousPagePath={{
             pathname: PATHS.SEARCH,
             search: new URLSearchParams({
               page: (page - 1).toString(),
-              search: searchParam ?? '',
+              q: searchParam ?? '',
             }).toString(),
           }}
           totalPages={Math.ceil(data.totalResults / 10)}
