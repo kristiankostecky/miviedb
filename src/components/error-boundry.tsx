@@ -3,7 +3,7 @@ import { ValiError } from 'valibot'
 
 export function ErrorBoundary({ message }: { message?: string }) {
   const error = useRouteError()
-  const unusedVar = ''
+  const unusedVar = 'unused'
 
   console.error(error)
   const errorMessage =
