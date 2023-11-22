@@ -1,6 +1,5 @@
 name: Check on before merge
 on:
-  pull_request:
   merge_group:
 
 jobs:
